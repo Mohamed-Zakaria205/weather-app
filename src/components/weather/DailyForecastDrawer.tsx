@@ -1,16 +1,81 @@
 import type { HourlyForecastData } from "../../types/weather";
+import { useMemo } from "react";
 
 interface DailyForecastDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   data: HourlyForecastData[];
+  city: string;
 }
 
 export function DailyForecastDrawer({
   isOpen,
   onClose,
   data,
+  city,
 }: DailyForecastDrawerProps) {
+  // Compute high/low from the 24h data
+  const { highTemp, lowTemp, chartPath, chartFill, chartDots, chartLabels } =
+    useMemo(() => {
+      if (data.length === 0)
+        return {
+          highTemp: 0,
+          lowTemp: 0,
+          chartPath: "",
+          chartFill: "",
+          chartDots: [],
+          chartLabels: [],
+        };
+
+      const temps = data.map((d) => d.temperature);
+      const high = Math.max(...temps);
+      const low = Math.min(...temps);
+      const range = high - low || 1;
+
+      // Generate SVG spline points
+      const points = data.map((d, i) => {
+        const x = (i / (data.length - 1)) * 100;
+        const y = 38 - ((d.temperature - low) / range) * 34; // 4..38 range
+        return { x, y };
+      });
+
+      // Build smooth path with quadratic curves
+      let path = `M ${points[0].x} ${points[0].y}`;
+      for (let i = 1; i < points.length; i++) {
+        const cx = (points[i - 1].x + points[i].x) / 2;
+        path += ` Q ${cx} ${points[i - 1].y}, ${points[i].x} ${points[i].y}`;
+      }
+
+      const fillPath = `${path} V 40 H 0 Z`;
+
+      // Sample 6 evenly-spaced dots
+      const step = Math.max(1, Math.floor(data.length / 5));
+      const dots = [0, step, step * 2, step * 3, step * 4, data.length - 1]
+        .filter((i) => i < data.length)
+        .map((i) => points[i]);
+
+      // Labels at 5 points
+      const labelStep = Math.max(1, Math.floor(data.length / 4));
+      const labels = [
+        0,
+        labelStep,
+        labelStep * 2,
+        labelStep * 3,
+        data.length - 1,
+      ]
+        .filter((i) => i < data.length)
+        .map((i) => data[i].time);
+
+      return {
+        highTemp: high,
+        lowTemp: low,
+        chartPath: path,
+        chartFill: fillPath,
+        chartDots: dots,
+        chartLabels: labels,
+      };
+    }, [data]);
+
   return (
     <>
       {/* Backdrop */}
@@ -28,8 +93,8 @@ export function DailyForecastDrawer({
         {/* TopAppBar */}
         <header className="absolute top-0 w-full max-w-xl z-50 flex justify-between items-center px-6 py-5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl shadow-sm shadow-blue-500/5 transition-colors duration-300">
           <div className="flex flex-col">
-            <span className="text-xs font-sans uppercase tracking-widest text-[#717786]">
-              San Francisco, CA
+            <span className="text-xs font-sans uppercase tracking-widest text-outline">
+              {city}
             </span>
             <h2 className="text-xl font-heading font-bold tracking-tight text-blue-900 dark:text-blue-100">
               24-Hour Forecast
@@ -53,8 +118,10 @@ export function DailyForecastDrawer({
                   Temperature Trend
                 </span>
                 <div className="text-3xl font-heading font-bold text-primary">
-                  High 84°{" "}
-                  <span className="text-outline font-light">/ Low 62°</span>
+                  High {highTemp}°{" "}
+                  <span className="text-outline font-light">
+                    / Low {lowTemp}°
+                  </span>
                 </div>
               </div>
             </div>
@@ -67,7 +134,7 @@ export function DailyForecastDrawer({
               >
                 <defs>
                   <linearGradient
-                    id="chartGradient"
+                    id="chartGradient24h"
                     x1="0"
                     x2="0"
                     y1="0"
@@ -85,32 +152,27 @@ export function DailyForecastDrawer({
                     ></stop>
                   </linearGradient>
                 </defs>
+                <path d={chartFill} fill="url(#chartGradient24h)"></path>
                 <path
-                  d="M 0 35 Q 10 32, 20 20 T 40 10 T 60 15 T 80 28 T 100 35 V 40 H 0 Z"
-                  fill="url(#chartGradient)"
-                ></path>
-                <path
-                  className="chart-spline transition-all duration-1000 ease-out"
-                  d="M 0 35 Q 10 32, 20 20 T 40 10 T 60 15 T 80 28 T 100 35"
+                  d={chartPath}
                   fill="none"
                   stroke="#005da7"
                   strokeWidth="0.8"
-                  strokeDasharray="1000"
-                  strokeDashoffset="0"
                 ></path>
-                <circle cx="0" cy="35" fill="#005da7" r="1"></circle>
-                <circle cx="20" cy="20" fill="#005da7" r="1"></circle>
-                <circle cx="40" cy="10" fill="#005da7" r="1.5"></circle>
-                <circle cx="60" cy="15" fill="#005da7" r="1"></circle>
-                <circle cx="80" cy="28" fill="#005da7" r="1"></circle>
-                <circle cx="100" cy="35" fill="#005da7" r="1"></circle>
+                {chartDots.map((dot, i) => (
+                  <circle
+                    key={i}
+                    cx={dot.x}
+                    cy={dot.y}
+                    fill="#005da7"
+                    r={i === 2 ? 1.5 : 1}
+                  ></circle>
+                ))}
               </svg>
               <div className="flex justify-between mt-2 text-[10px] font-sans text-outline uppercase tracking-tighter">
-                <span>2 PM</span>
-                <span>8 PM</span>
-                <span>2 AM</span>
-                <span>8 AM</span>
-                <span>2 PM</span>
+                {chartLabels.map((label, i) => (
+                  <span key={i}>{label}</span>
+                ))}
               </div>
             </div>
           </section>
@@ -123,8 +185,8 @@ export function DailyForecastDrawer({
 
             {data.map((item, index) => {
               const isCurrent = index === 0;
-              const prob = item.probOfPrecip || 0;
-              const windSpeed = 10 + (index % 5);
+              const prob = item.probOfPrecip ?? 0;
+              const isNight = !item.isDay && !item.filled;
 
               return (
                 <div
@@ -132,31 +194,45 @@ export function DailyForecastDrawer({
                   className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
                     isCurrent
                       ? "bg-white/80 border-[#c1c6d7]/5 shadow-sm hover:translate-x-1"
-                      : "bg-[#f2f4f6]/40 border-transparent hover:bg-white/60"
+                      : isNight
+                        ? "bg-[#f2f4f6]/20 border-transparent"
+                        : "bg-[#f2f4f6]/40 border-transparent hover:bg-white/60"
                   }`}
                 >
                   <div className="w-16">
                     <span
-                      className={`text-sm ${isCurrent ? "font-semibold text-on-surface-variant" : "font-medium text-on-surface-variant"}`}
+                      className={`text-sm ${
+                        isCurrent
+                          ? "font-semibold text-on-surface-variant"
+                          : isNight
+                            ? "font-medium text-on-surface-variant/60"
+                            : "font-medium text-on-surface-variant"
+                      }`}
                     >
                       {item.time}
                     </span>
                   </div>
                   <div className="flex flex-col items-center">
                     <span
-                      className="material-symbols-outlined text-primary text-2xl"
+                      className={`material-symbols-outlined text-2xl ${isNight ? "text-primary/60" : "text-primary"}`}
                       style={{
                         fontVariationSettings: item.filled
                           ? "'FILL' 1"
                           : "'FILL' 0",
                       }}
                     >
-                      {item.icon}
+                      {isNight ? "bedtime" : item.icon}
                     </span>
                   </div>
                   <div className="w-16 text-center">
                     <span
-                      className={`text-xl font-heading ${isCurrent ? "font-extrabold text-primary" : "font-bold text-on-surface"}`}
+                      className={`text-xl font-heading ${
+                        isCurrent
+                          ? "font-extrabold text-primary"
+                          : isNight
+                            ? "font-bold text-on-surface/60"
+                            : "font-bold text-on-surface"
+                      }`}
                     >
                       {item.temperature}°
                     </span>
@@ -173,67 +249,27 @@ export function DailyForecastDrawer({
                     <div className="h-1 w-full bg-surface-variant rounded-full overflow-hidden">
                       <div
                         className="h-full bg-primary transition-all"
-                        style={{ width: `${prob}%` }}
+                        style={{ width: `${Math.min(prob, 100)}%` }}
                       ></div>
                     </div>
                   </div>
                   <div className="w-20 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <span className="text-[11px] font-medium text-outline">
-                        {windSpeed} mph
-                      </span>
                       <span
-                        className={`material-symbols-outlined text-[14px] text-outline rotate-[${(index * 30) % 360}deg]`}
+                        className={`text-[11px] font-medium ${isNight ? "text-outline/60" : "text-outline"}`}
                       >
-                        navigation
+                        {item.windSpeed ?? 0} mph
                       </span>
                     </div>
-                    <span className="text-[9px] text-outline uppercase font-bold">
-                      NNW
+                    <span
+                      className={`text-[9px] uppercase font-bold ${isNight ? "text-outline/60" : "text-outline"}`}
+                    >
+                      {item.windDirection ?? ""}
                     </span>
                   </div>
                 </div>
               );
             })}
-
-            {/* Night cycle mocks */}
-            {[
-              { time: "8 PM", t: 68, w: 5 },
-              { time: "9 PM", t: 66, w: 4 },
-              { time: "10 PM", t: 64, w: 3 },
-            ].map((night, i) => (
-              <div
-                key={`night-${i}`}
-                className="flex items-center justify-between p-4 rounded-xl bg-[#f2f4f6]/20"
-              >
-                <div className="w-16">
-                  <span className="text-sm font-medium text-on-surface-variant/60">
-                    {night.time}
-                  </span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span
-                    className="material-symbols-outlined text-primary/60 text-2xl"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    bedtime
-                  </span>
-                </div>
-                <div className="w-16 text-center">
-                  <span className="text-xl font-heading font-bold text-[#191c1e]/60">
-                    {night.t}°
-                  </span>
-                </div>
-                <div className="w-24">
-                  <div className="h-1 w-full bg-[#eceef0]/40 rounded-full"></div>
-                </div>
-                <div className="w-20 text-right">
-                  <span className="text-[11px] text-outline/60">
-                    {night.w} mph
-                  </span>
-                </div>
-              </div>
-            ))}
           </div>
 
           {/* Decorative element */}

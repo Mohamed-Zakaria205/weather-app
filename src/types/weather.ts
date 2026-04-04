@@ -14,6 +14,9 @@ export interface HourlyForecastData {
   icon: string;
   filled?: boolean;
   probOfPrecip?: number;
+  windSpeed?: number;
+  windDirection?: string;
+  isDay?: boolean;
 }
 
 export interface DailyForecastData {
@@ -33,4 +36,19 @@ export interface WeatherDetailsData {
   windSpeed: number;
   uvIndex: string;
   realFeel: number;
+}
+
+export interface ExtendedDailyData {
+  fullDate: string;
+  day: string;
+  condition: string;
+  description: string;
+  icon: string;
+  high: number;
+  low: number;
+  humidity: number;
+  windSpeed: number;
+  uv: number;
+  iconColor: string;
+  filled: boolean;
 }
