@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -20,8 +22,9 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-on-surface-variant: #414754;
-  --color-outline: #717786;
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-surface-variant: var(--surface-variant);
 
   --radius-xl: var(--radius);
   --radius-lg: 0.75rem;
@@ -54,15 +57,49 @@
     --input: #eceef0;
     --ring: #0076d1;
     --radius: 0.75rem;
+    --on-surface-variant: #414754;
+    --outline: #717786;
+    --surface-variant: #e0e2ec;
+  }
+
+  .dark {
+    --background: #0f1419;
+    --foreground: #e1e3e6;
+    --card: #1a1f2e;
+    --card-foreground: #e1e3e6;
+    --popover: #1a1f2e;
+    --popover-foreground: #e1e3e6;
+    --primary: #8ec5ff;
+    --primary-foreground: #003060;
+    --secondary: #1e3a3a;
+    --secondary-foreground: #a0c4c4;
+    --muted: #1a1f2e;
+    --muted-foreground: #9ea3b0;
+    --accent: #1e2230;
+    --accent-foreground: #e1e3e6;
+    --destructive: #ffb4ab;
+    --destructive-foreground: #690005;
+    --border: #3a3f52;
+    --input: #262b3a;
+    --ring: #8ec5ff;
+    --on-surface-variant: #bfc4d0;
+    --outline: #8a8fa0;
+    --surface-variant: #2a2f3e;
   }
 
   body {
     font-family: 'Inter', sans-serif;
     background: linear-gradient(180deg, #e0f2fe 0%, #f7f9fb 100%);
     min-height: 100vh;
-    color: #191c1e;
+    color: var(--foreground);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background 0.4s ease, color 0.3s ease;
+  }
+
+  .dark body,
+  body.dark-body {
+    background: linear-gradient(180deg, #0c1220 0%, #0f1419 100%);
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -71,17 +108,25 @@
   }
 }
 
-/* Glassmorphism utilities — defined outside @layer so Tailwind doesn't purge them */
+/* Glassmorphism utilities */
 .glass {
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
+.dark .glass {
+  background: rgba(26, 31, 46, 0.7);
+}
+
 .glass-darker {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
+}
+
+.dark .glass-darker {
+  background: rgba(26, 31, 46, 0.9);
 }
 
 /* Material Symbols */

@@ -16,7 +16,7 @@ export function RadarMap() {
         <span className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full w-fit tracking-widest uppercase">
           Live Radar
         </span>
-        <h4 className="text-2xl font-bold text-slate-900">Precipitation Map</h4>
+        <h4 className="text-2xl font-bold text-slate-900 dark:text-white">Precipitation Map</h4>
       </div>
       {/* Fullscreen button */}
       <button className="absolute top-6 right-6 z-10 glass-darker p-3 rounded-full hover:bg-white transition-all shadow-xl cursor-pointer">

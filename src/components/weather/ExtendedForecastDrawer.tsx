@@ -34,28 +34,28 @@ export function ExtendedForecastDrawer({
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-[#191c1e]/5 backdrop-blur-sm animate-in fade-in duration-300"
+          className="fixed inset-0 z-40 bg-[#191c1e]/5 dark:bg-black/30 backdrop-blur-sm animate-in fade-in duration-300"
           onClick={onClose}
         ></div>
       )}
 
       {/* Panel */}
       <div
-        className={`fixed top-0 right-0 z-50 w-full max-w-xl bg-[#e8f0fe]/80 backdrop-blur-2xl shadow-2xl h-full flex flex-col border-l border-[#c1c6d7]/15 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 z-50 w-full max-w-xl bg-[#e8f0fe]/80 dark:bg-[#0f1419]/90 backdrop-blur-2xl shadow-2xl h-full flex flex-col border-l border-[#c1c6d7]/15 dark:border-white/5 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* Header */}
         <header className="flex justify-between items-start px-6 pt-6 pb-4">
           <div className="flex items-start gap-3">
             <button
               onClick={onClose}
-              className="mt-1 w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/30 transition-colors active:scale-95 cursor-pointer text-blue-800"
+              className="mt-1 w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/30 dark:hover:bg-white/10 transition-colors active:scale-95 cursor-pointer text-blue-800 dark:text-primary"
             >
               <span className="material-symbols-outlined text-xl">
                 arrow_back
               </span>
             </button>
             <div>
-              <h2 className="text-xl font-heading font-bold tracking-tight text-blue-900">
+              <h2 className="text-xl font-heading font-bold tracking-tight text-blue-900 dark:text-blue-100">
                 Extended Forecast
               </h2>
               <p className="text-xs text-on-surface-variant flex items-center gap-1 mt-0.5">
@@ -66,7 +66,7 @@ export function ExtendedForecastDrawer({
               </p>
             </div>
           </div>
-          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/30 transition-colors text-on-surface-variant cursor-pointer">
+          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/30 dark:hover:bg-white/10 transition-colors text-on-surface-variant cursor-pointer">
             <span className="material-symbols-outlined text-xl">
               more_vert
             </span>
@@ -76,10 +76,10 @@ export function ExtendedForecastDrawer({
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-5 pb-8 hide-scrollbar">
           {/* Precipitation Summary Card */}
-          <section className="mb-8 p-5 rounded-2xl bg-white/50 border border-[#c1c6d7]/10">
+          <section className="mb-8 p-5 rounded-2xl bg-white/50 dark:bg-white/5 border border-[#c1c6d7]/10 dark:border-white/5">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-base font-heading font-bold text-on-surface">
+                <h3 className="text-base font-heading font-bold text-foreground">
                   Precipitation
                 </h3>
                 <p className="text-xs text-on-surface-variant">
@@ -133,12 +133,12 @@ export function ExtendedForecastDrawer({
             {data.map((day, index) => (
               <div
                 key={index}
-                className="p-5 rounded-2xl bg-white/50 border border-[#c1c6d7]/10 transition-all hover:bg-white/70"
+                className="p-5 rounded-2xl bg-white/50 dark:bg-white/5 border border-[#c1c6d7]/10 dark:border-white/5 transition-all hover:bg-white/70 dark:hover:bg-white/10"
               >
                 {/* Top Row: Date + Icon + Temps */}
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h4 className="text-base font-heading font-bold text-on-surface">
+                    <h4 className="text-base font-heading font-bold text-foreground">
                       {day.fullDate}
                     </h4>
                     <p className="text-xs text-on-surface-variant">{day.condition}</p>
@@ -155,7 +155,7 @@ export function ExtendedForecastDrawer({
                       {day.icon}
                     </span>
                     <div className="text-right">
-                      <span className="text-2xl font-heading font-bold text-on-surface">
+                      <span className="text-2xl font-heading font-bold text-foreground">
                         {day.high}°
                       </span>
                       <span className="text-sm text-on-surface-variant ml-0.5">

@@ -81,17 +81,17 @@ export function DailyForecastDrawer({
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-[#191c1e]/5 backdrop-blur-sm animate-in fade-in duration-300"
+          className="fixed inset-0 z-40 bg-[#191c1e]/5 dark:bg-black/30 backdrop-blur-sm animate-in fade-in duration-300"
           onClick={onClose}
         ></div>
       )}
 
       {/* Panel Content */}
       <div
-        className={`fixed top-0 right-0 z-50 w-full max-w-xl bg-white/60 dark:bg-slate-900/60 glass shadow-2xl h-full flex flex-col border-l border-[#c1c6d7]/15 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 z-50 w-full max-w-xl bg-white/60 dark:bg-[#0f1419]/90 shadow-2xl h-full flex flex-col border-l border-[#c1c6d7]/15 dark:border-white/5 backdrop-blur-2xl transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* TopAppBar */}
-        <header className="absolute top-0 w-full max-w-xl z-50 flex justify-between items-center px-6 py-5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl shadow-sm shadow-blue-500/5 transition-colors duration-300">
+        <header className="absolute top-0 w-full max-w-xl z-50 flex justify-between items-center px-6 py-5 bg-white/60 dark:bg-[#0f1419]/80 backdrop-blur-xl shadow-sm shadow-blue-500/5 dark:shadow-black/10 transition-colors duration-300">
           <div className="flex flex-col">
             <span className="text-xs font-sans uppercase tracking-widest text-outline">
               {city}
@@ -102,7 +102,7 @@ export function DailyForecastDrawer({
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 dark:hover:bg-black/20 transition-colors active:scale-95 duration-200 text-blue-700 cursor-pointer"
+            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 dark:hover:bg-white/10 transition-colors active:scale-95 duration-200 text-blue-700 dark:text-primary cursor-pointer"
           >
             <span className="material-symbols-outlined">close</span>
           </button>
@@ -111,7 +111,7 @@ export function DailyForecastDrawer({
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto pt-24 pb-12 px-6 hide-scrollbar">
           {/* Temperature Chart Section */}
-          <section className="mb-10 p-6 rounded-xl bg-white/40 border border-[#c1c6d7]/10">
+          <section className="mb-10 p-6 rounded-xl bg-white/40 dark:bg-white/5 border border-[#c1c6d7]/10 dark:border-white/5">
             <div className="flex justify-between items-end mb-4">
               <div>
                 <span className="text-sm font-sans text-on-surface-variant">
@@ -193,10 +193,10 @@ export function DailyForecastDrawer({
                   key={index}
                   className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
                     isCurrent
-                      ? "bg-white/80 border-[#c1c6d7]/5 shadow-sm hover:translate-x-1"
+                      ? "bg-white/80 dark:bg-white/10 border-[#c1c6d7]/5 dark:border-white/5 shadow-sm hover:translate-x-1"
                       : isNight
-                        ? "bg-[#f2f4f6]/20 border-transparent"
-                        : "bg-[#f2f4f6]/40 border-transparent hover:bg-white/60"
+                        ? "bg-[#f2f4f6]/20 dark:bg-white/[0.02] border-transparent"
+                        : "bg-[#f2f4f6]/40 dark:bg-white/5 border-transparent hover:bg-white/60 dark:hover:bg-white/10"
                   }`}
                 >
                   <div className="w-16">

@@ -18,6 +18,10 @@ function App() {
   const [query, setQuery] = useState("");
   const [city, setCity] = useState("Cairo");
   const [showResults, setShowResults] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem("theme");
+    return saved === "dark";
+  });
   const searchRef = useRef<HTMLDivElement>(null);
 
   // Weather data query
@@ -47,6 +51,20 @@ function App() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Dark mode effect
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add("dark");
+      document.body.classList.add("dark-body");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      document.body.classList.remove("dark-body");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
 
   const handleSelectCity = (result: SearchResult) => {
     setCity(result.name);
@@ -113,10 +131,10 @@ function App() {
   return (
     <div className="text-foreground">
       {/* Top Navigation Bar */}
-      <nav className="fixed top-0 w-full z-50 bg-white/60 backdrop-blur-xl shadow-sm shadow-blue-500/5 font-heading">
+      <nav className="fixed top-0 w-full z-50 bg-white/60 dark:bg-[#1a1f2e]/80 backdrop-blur-xl shadow-sm shadow-blue-500/5 dark:shadow-black/10 font-heading transition-colors duration-300">
         <div className="flex justify-between items-center max-w-7xl mx-auto px-6 h-20">
           <div className="flex items-center gap-8">
-            <span className="text-2xl font-bold tracking-tight text-slate-900 cursor-pointer">
+            <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white cursor-pointer">
               SkyClarity
             </span>
             {/* <div className="hidden md:flex items-center gap-6">
@@ -150,7 +168,7 @@ function App() {
                   </span>
                 </div>
                 <input
-                  className="bg-white/80 backdrop-blur-md border-none rounded-full py-2.5 pl-12 pr-6 w-48 md:w-64 focus:ring-2 focus:ring-primary/20 transition-all duration-300 outline-none text-sm placeholder:text-slate-400"
+                  className="bg-white/80 dark:bg-white/10 dark:text-white backdrop-blur-md border-none rounded-full py-2.5 pl-12 pr-6 w-48 md:w-64 focus:ring-2 focus:ring-primary/20 transition-all duration-300 outline-none text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
                   placeholder="Search city..."
                   type="text"
                   value={query}
@@ -180,10 +198,10 @@ function App() {
                             location_on
                           </span>
                           <div>
-                            <p className="text-sm font-semibold text-slate-800">
+                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                               {result.name}
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
                               {result.region}, {result.country}
                             </p>
                           </div>
@@ -206,16 +224,16 @@ function App() {
                 )}
             </div>
 
-            {/* <div className="flex items-center gap-2">
-              <button className="p-2 rounded-full hover:bg-white/40 transition-all duration-300 cursor-pointer active:scale-95 text-on-surface-variant">
-                <span className="material-symbols-outlined">settings</span>
-              </button>
-              <button className="p-2 rounded-full hover:bg-white/40 transition-all duration-300 cursor-pointer active:scale-95 text-on-surface-variant">
-                <span className="material-symbols-outlined">
-                  account_circle
-                </span>
-              </button>
-            </div> */}
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={() => setIsDark(!isDark)}
+              className="p-2.5 rounded-full hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-300 cursor-pointer active:scale-90 text-on-surface-variant"
+              aria-label="Toggle dark mode"
+            >
+              <span className="material-symbols-outlined text-xl transition-transform duration-300">
+                {isDark ? "light_mode" : "dark_mode"}
+              </span>
+            </button>
           </div>
         </div>
       </nav>
@@ -271,10 +289,10 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full mt-auto bg-slate-50/40 backdrop-blur-md text-slate-500 text-sm tracking-wide font-sans">
+      <footer className="w-full mt-auto bg-slate-50/40 dark:bg-[#1a1f2e]/40 backdrop-blur-md text-slate-500 dark:text-slate-400 text-sm tracking-wide font-sans transition-colors duration-300">
         <div className="flex flex-col md:flex-row justify-between items-center px-8 py-12 max-w-7xl mx-auto border-t border-white/10">
           <div className="mb-6 md:mb-0">
-            <span className="font-black text-slate-800 text-xl font-heading">
+            <span className="font-black text-slate-800 dark:text-white text-xl font-heading">
               SkyClarity
             </span>
             <p className="mt-2 opacity-80">
