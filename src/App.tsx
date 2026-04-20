@@ -5,6 +5,7 @@ import { WeatherDetails } from "./components/weather/WeatherDetails";
 import { RadarMap } from "./components/weather/RadarMap";
 import { DailyForecastDrawer } from "./components/weather/DailyForecastDrawer";
 import { ExtendedForecastDrawer } from "./components/weather/ExtendedForecastDrawer";
+import { DashboardPage } from "./components/DashboardPage";
 import { useState, useRef, useEffect } from "react";
 import useCustomeQuery from "./hooks/useCustomeQuery";
 import { transformWeatherData, mapIcon } from "./utils/functions";
@@ -13,6 +14,7 @@ import type { SearchResult } from "./utils/functions";
 const API_KEY = "70058cd13c394cb588d222355260304";
 
 function App() {
+  const [activeTab, setActiveTab] = useState<'forecast' | 'dashboard'>('forecast');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isExtendedOpen, setIsExtendedOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -137,26 +139,28 @@ function App() {
             <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white cursor-pointer">
               SkyClarity
             </span>
-            {/* <div className="hidden md:flex items-center gap-6">
-              <a
-                href="#"
-                className="text-blue-700 font-semibold border-b-2 border-blue-600 pb-0.5 transition-all duration-300"
+            <div className="hidden md:flex items-center gap-6 mt-1.5">
+              <button
+                onClick={() => setActiveTab('forecast')}
+                className={`font-semibold pb-1 transition-all duration-300 border-b-2 cursor-pointer ${
+                  activeTab === 'forecast'
+                    ? 'text-primary border-primary'
+                    : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-primary dark:hover:text-primary'
+                }`}
               >
                 Forecast
-              </a>
-              <a
-                href="#"
-                className="text-slate-600 hover:text-blue-500 transition-all duration-300"
+              </button>
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                className={`font-semibold pb-1 transition-all duration-300 border-b-2 cursor-pointer ${
+                  activeTab === 'dashboard'
+                    ? 'text-primary border-primary'
+                    : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-primary dark:hover:text-primary'
+                }`}
               >
-                Radar
-              </a>
-              <a
-                href="#"
-                className="text-slate-600 hover:text-blue-500 transition-all duration-300"
-              >
-                History
-              </a>
-            </div> */}
+                Dashboard
+              </button>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             {/* Search Box */}
@@ -239,10 +243,14 @@ function App() {
       </nav>
 
       {/* Main Content */}
-      <main className="pt-28 pb-12 max-w-7xl mx-auto px-6">
+      <main className="pt-28 pb-12 max-w-7xl mx-auto px-6 min-h-[calc(100vh-120px)]">
+        {/* Fullscreen Overlay Dashboard */}
+        {activeTab === 'dashboard' && <DashboardPage onBack={() => setActiveTab('forecast')} />}
+
         {/* Hero Section: Detached Title + Temperature */}
         <section className="mb-12 text-left flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div className="flex-1">
+
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight font-heading text-foreground mb-2">
               {weatherData.city}
             </h1>
