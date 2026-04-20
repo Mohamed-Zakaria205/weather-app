@@ -41,7 +41,7 @@ export function DashboardPage({ onBack }: DashboardPageProps) {
         <iframe
           title="Power BI Dashboard"
           className="w-full h-full border-none flex-1"
-          src="https://app.powerbi.com/reportEmbed?reportId=04a8dee3-21dc-4378-bc7c-28eaebdfb710&autoAuth=true&ctid=d1aad15a-5724-45cd-a320-5e75718fa6bd&actionBarEnabled=false&navContentPaneEnabled=false&filterPaneEnabled=false"
+          src="https://app.powerbi.com/reportEmbed?reportId=2bc28d64-7d32-415e-b155-f2951cdf9359&autoAuth=true&ctid=d1aad15a-5724-45cd-a320-5e75718fa6bd&reportCopilotInEmbed=true&navContentPaneEnabled=false&actionBarEnabled=false&filterPaneEnabled=false"
           allowFullScreen
           onLoad={() => setLoading(false)}
         />
